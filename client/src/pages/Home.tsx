@@ -19,7 +19,7 @@ export default function Home() {
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
 
   useEffect(() => {
-    fetch("/data.json")
+    fetch(`${import.meta.env.BASE_URL}data.json`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load data");
         return res.json();

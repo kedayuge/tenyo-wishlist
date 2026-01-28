@@ -64,7 +64,7 @@ export default function TrickCard({ trick, index }: TrickCardProps) {
         <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-purple-900/30 to-cyan-900/30">
           {!imageError ? (
             <img
-              src={`/images/${trick.image_filename}`}
+              src={`${import.meta.env.BASE_URL}images/${trick.image_filename}`}
               alt={trick.name}
               className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
               onError={() => setImageError(true)}
@@ -157,7 +157,7 @@ export default function TrickCard({ trick, index }: TrickCardProps) {
               <div className="relative aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-purple-900/30 to-cyan-900/30 border border-purple-500/20">
                 {!imageError ? (
                   <img
-                    src={`/images/${trick.image_filename}`}
+                    src={`${import.meta.env.BASE_URL}images/${trick.image_filename}`}
                     alt={trick.name}
                     className="w-full h-full object-contain p-4"
                   />

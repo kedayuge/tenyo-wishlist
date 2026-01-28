@@ -16,7 +16,7 @@ export default function HeroSection({ totalTricks }: HeroSectionProps) {
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}images/hero-bg.jpg')` }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
       </div>
