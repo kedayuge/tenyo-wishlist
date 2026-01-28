@@ -8,11 +8,19 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
 // Hash-based routing for GitHub Pages compatibility
-const currentHashLocation = () => window.location.hash.replace(/^#/, "") || "/";
+// Always use hash routing in production to avoid 404 issues
+const currentHashLocation = () => {
+  const hash = window.location.hash.replace(/^#/, "");
+  return hash || "/";
+};
 
 const subscribeToHashChanges = (callback: () => void) => {
   window.addEventListener("hashchange", callback);
-  return () => window.removeEventListener("hashchange", callback);
+  window.addEventListener("popstate", callback);
+  return () => {
+    window.removeEventListener("hashchange", callback);
+    window.removeEventListener("popstate", callback);
+  };
 };
 
 const useHashLocation = (): [string, (to: string) => void] => {
@@ -34,15 +42,15 @@ function Routes() {
 }
 
 function App() {
-  // Use hash routing only in production on GitHub Pages
-  const isGitHubPages = import.meta.env.PROD && window.location.hostname.includes('github.io');
+  // Always use hash routing in production for GitHub Pages compatibility
+  const useHashRouter = import.meta.env.PROD;
   
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
-          {isGitHubPages ? (
+          {useHashRouter ? (
             <Router hook={useHashLocation}>
               <Routes />
             </Router>
