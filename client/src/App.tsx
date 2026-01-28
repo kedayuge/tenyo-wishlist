@@ -2,12 +2,26 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch, Router } from "wouter";
+import { useSyncExternalStore, useCallback } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
-// Get base path from Vite's base config for GitHub Pages
-const base = import.meta.env.BASE_URL || "/";
+// Hash-based routing for GitHub Pages compatibility
+const currentHashLocation = () => window.location.hash.replace(/^#/, "") || "/";
+
+const subscribeToHashChanges = (callback: () => void) => {
+  window.addEventListener("hashchange", callback);
+  return () => window.removeEventListener("hashchange", callback);
+};
+
+const useHashLocation = (): [string, (to: string) => void] => {
+  const location = useSyncExternalStore(subscribeToHashChanges, currentHashLocation);
+  const navigate = useCallback((to: string) => {
+    window.location.hash = to;
+  }, []);
+  return [location, navigate];
+};
 
 function Routes() {
   return (
@@ -20,14 +34,23 @@ function Routes() {
 }
 
 function App() {
+  // Use hash routing only in production on GitHub Pages
+  const isGitHubPages = import.meta.env.PROD && window.location.hostname.includes('github.io');
+  
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
-          <Router base={base.endsWith("/") ? base.slice(0, -1) : base}>
-            <Routes />
-          </Router>
+          {isGitHubPages ? (
+            <Router hook={useHashLocation}>
+              <Routes />
+            </Router>
+          ) : (
+            <Router>
+              <Routes />
+            </Router>
+          )}
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
